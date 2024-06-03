@@ -1,5 +1,7 @@
 const { config } = require("dotenv");
 config();
+const { Sequelize } = require("sequelize");
+const sequelize = new Sequelize('sqlite::memory:');
 
 const port = process.env.PORT || 3000;
 const hostname = process.env.HOST_NAME || "localhost";
@@ -11,4 +13,4 @@ const dbConfig = {
   pwd: process.env.DB_PWD,
 };
 
-module.exports = { dbConfig, port, hostname };
+module.exports = { dbConfig, port, hostname, sequelize };

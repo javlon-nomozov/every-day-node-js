@@ -1,0 +1,31 @@
+const { Sequelize, DataTypes, Model } = require('sequelize');
+const sequelize = new Sequelize('sqlite::memory:');
+
+class User extends Model {}
+User.init({
+  username: DataTypes.STRING,
+}, { sequelize, modelName: 'user' });
+
+class Profile extends Model {}
+Profile.init({
+  bio: DataTypes.TEXT,
+}, { sequelize, modelName: 'profile' });
+
+// Define the one-to-one relationship
+User.hasOne(Profile, {
+  foreignKey: 'userId',
+  as: 'profile'
+});
+Profile.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
+
+sequelize.sync({ force: true }).then(async () => {
+  // Example usage
+  const user = await User.create({ username: 'johndoe' });
+  const profile = await Profile.create({ bio: 'Software developer', userId: user.id });
+  
+  const userWithProfile = await User.findOne({ where: { id: user.id }, include: 'profile' });
+  console.log(userWithProfile.toJSON());
+});
